@@ -24,6 +24,10 @@ The branch that you wish to squash.  Default: current branch.
 
 The name of the new branch created by this.  Default: `quick-CB`, where `CB` is the name of the branch you're on at the time the command is run.
 
+    -c, --comment
+
+Add a comment.  (Defaults to one of two if not given.)
+
     -h, --honest
 
 Don't backdate commit.  (Still claims credit for it though.)
