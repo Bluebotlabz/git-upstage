@@ -2,13 +2,15 @@
 # git-upstage: create and push a new branch that squashes the
 # current branch to a single commit, back-dated before
 # completion of that branch, then rubs it in with a slimy
-# commit message
+# commit message (which can be altered)
 
 # Defaults to assuming you're on the branch you want to copy.
 CURRENT_BRANCH=`git branch | awk '/^\*/{print $2}'`
 NEW_BRANCH_NAME=quick-${CURRENT_BRANCH}
 # Whether to backdate or otherwise make it look dishonest
 HONEST=0
+# Whether to use custom comment of not
+COMMENT=0
 # Option handler taken from http://stackoverflow.com/a/14203146/1260665
 while [[ $# -ge 1 ]]
 do
@@ -20,6 +22,10 @@ do
             ;;
         -n|--newbranch)
             NEW_BRANCH_NAME="$2"
+            shift
+            ;;
+        -c|--comment)
+            COMMENT="$2"
             shift
             ;;
         -h|--honest)
@@ -48,11 +54,22 @@ timeback () {
 if [ "$HONEST" = "0" ]
 then
     CLAIMED_TIME=`timeback 300`
-    SLIMY_MESSAGE="Just a quick fix for the whole $CURRENT_BRANCH issue."
+    if [ "$COMMENT" = "0" ]
+    then
+        SLIMY_MESSAGE="Just a quick fix for the whole $CURRENT_BRANCH issue."
+    else
+        SLIMY_MESSAGE="$COMMENT"
+    fi
 else
     CLAIMED_TIME=`timeback 0`
-    SLIMY_MESSAGE="Fix for the $CURRENT_BRANCH issue."
+    if [ "$COMMENT" = "0" ]
+    then
+        SLIMY_MESSAGE="Fix for the $CURRENT_BRANCH issue."
+    else
+        SLIMY_MESSAGE="$COMMENT"
+    fi
 fi
+
 TEMP_BRANCH_NAME=temp-${CURRENT_BRANCH}
 echo $SLIMY_MESSAGE
 echo $CLAIMED_TIME
